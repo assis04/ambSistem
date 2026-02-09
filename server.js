@@ -3,7 +3,9 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import authRoutes from "./src/routes/authRoutes.js"; // Importa as rotas aqui
+import authRoutes from "./src/routes/authRoutes.js"; 
+import roleRoutes from "./src/routes/roleRoutes.js";
+
 
 // Validação de variáveis de ambiente (Fail Fast)
 if (!process.env.JWT_SECRET) {
@@ -18,6 +20,7 @@ app.use(helmet());
 app.use(cors({ origin: process.env.CORS_ORIGIN || "http://localhost:3000" }));
 app.use(express.json());
 
+
 // Rate Limiting Global
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -27,6 +30,8 @@ app.use(limiter);
 
 // Rotas
 app.use("/auth", authRoutes); // Usa o prefixo /auth para organizar
+
+app.use("/roles", roleRoutes);
 
 // Tratamento Global de Erros (ver ponto 4)
 app.use((err, req, res, next) => {

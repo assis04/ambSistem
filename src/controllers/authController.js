@@ -6,9 +6,9 @@ import { findUserByEmail, createUser } from "../services/userService.js";
 export class AuthController {
   static async register(req, res) {
     try {
-      const { nome, email, password } = req.body || {};
+      const { nome, email, password, role_id } = req.body || {};
 
-      if (!nome || !email || !password) {
+      if (!nome || !email || !password || !role) {
         return res.status(400).json({ message: "Dados obrigatórios faltando" });
       }
       const normalizedEmail = email.trim().toLowerCase();
@@ -38,6 +38,7 @@ export class AuthController {
         nome.trim(),
         normalizedEmail,
         hashedPassword,
+        role_id, // Envia o ID numérico
       );
 
       return res
@@ -75,6 +76,7 @@ export class AuthController {
         {
           id: user.id,
           email: user.email,
+          role: user.role_nome || "user", // Usa o nome que veio do JOIN
         },
         process.env.JWT_SECRET,
         { expiresIn: "1h" },
@@ -86,6 +88,8 @@ export class AuthController {
           id: user.id,
           nome: user.nome,
           email: user.email,
+          role: user.role_nome, // Envia o texto (ex: 'admin') para o front controlar o menu
+          roleId: user.role_id, // Envia o ID caso precises
         },
       });
     } catch (err) {
