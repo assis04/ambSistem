@@ -3,7 +3,7 @@ import express from "express";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
-import AuthController from "./controllers/authController.js";
+import authRoutes from "./src/routes/authRoutes.js";
 
 if (!process.env.JWT_SECRET) {
   console.error("FATAL: JWT_SECRET não definido. Defina no .env");
@@ -12,7 +12,10 @@ if (!process.env.JWT_SECRET) {
 
 const app = express();
 
+app.use("/auth", authRoutes);
+
 app.use(helmet());
+
 app.use(cors({
   origin: process.env.CORS_ORIGIN || "http://localhost:3000"
 }));
@@ -30,8 +33,6 @@ const authLimiter = rateLimit({
   message: { message: "Muitas tentativas, tente novamente mais tarde" },
 });
 
-app.post("/register", AuthController.register);
-app.post("/login", authLimiter, AuthController.login);
 
 app.listen(process.env.PORT || 3000, () => {
   console.log("Server running on port", process.env.PORT || 3000);

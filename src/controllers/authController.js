@@ -6,7 +6,7 @@ import { findUserByEmail, createUser } from "../services/userService.js";
 export class AuthController {
   static async register(req, res) {
     try {
-      const { nome, email, password } = req.body;
+      const { nome, email, password } = req.body || {};
 
       if (!nome || !email || !password) {
         return res.status(400).json({ message: "Dados obrigatórios faltando" });
@@ -51,10 +51,12 @@ export class AuthController {
 
   static async login(req, res) {
     try {
-      const { email, password } = req.body;
+      const { email, password } = req.body || {};
 
-      if (!email?.trim() || !password) {
-        return res.status(400).json({ message: "Email e senha obrigatórios" });
+      if (!email || !password) {
+        return res
+          .status(400)
+          .json({ message: "Corpo da requisição inválido ou vazio." });
       }
 
       const normalizedEmail = email.toLowerCase().trim();
